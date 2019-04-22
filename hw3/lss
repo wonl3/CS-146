@@ -1,0 +1,13 @@
+#!/bin/bash -x
+
+# If no arguments, print hw2-lss and exit
+if [ "$#" -eq 0 ]; then
+	ls -lS
+	exit 0
+fi
+
+# -s (--size) - print allocated size of each file in blocks
+# -i (--inode) - print index num of each file
+# -g - like -l but do not list owner
+
+exec ls -lS "$@"

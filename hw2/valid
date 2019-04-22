@@ -1,0 +1,18 @@
+#!/bin/bash
+
+VALID='^([a-zA-Z_])([0-9a-zA-Z_])*$'
+
+if [ "$#" -eq 0 ]; then
+	echo No arguments provided.
+	exit 1
+fi
+
+for arg in "$@"
+do
+
+if [[ "$arg" =~ $VALID ]]; then 
+	echo yes
+else
+	echo no
+fi
+done

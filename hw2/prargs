@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo 0: prargs
+
+INDEX=1
+
+for arg in "$@"
+do
+
+echo $INDEX: $arg
+INDEX=$((INDEX+1))
+
+done

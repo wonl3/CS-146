@@ -1,0 +1,10 @@
+#!/bin/bash -x
+
+for arg in "$@"
+do
+
+#remember the log the original directory
+
+mv -f $arg ./trashcan/
+
+done

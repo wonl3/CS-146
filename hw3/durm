@@ -1,0 +1,5 @@
+#!/bin/bash -x
+
+du -a trashcan/ | awk -F ' ' ' {sum += $1;} END {print sum;} '
+
+

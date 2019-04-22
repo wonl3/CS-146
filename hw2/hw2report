@@ -1,0 +1,208 @@
+﻿CS146
+                                                    =====
+                                              Assignment #2
+                                Won Joon Lee / 15647075
+                                Due Week 3, Lecture 1,  at beginning of class
+
+
+
+
+(2) 1. Explain what would happen if the following did not give error messages:
+          $ cat x y > y
+       and with
+          $ cat x >> x
+    Think before you rush off to try them.  Assume both input files are very large.
+
+
+Answer:
+        Cmd (cat x y > y) takes the content of x and the content of y and puts it into y.
+Cmd (cat x >> x) takes the content of x and appends it at the end of file x. (So, you would have the same content of x twice).
+
+
+(2) 2. Write a short shell script called "cx" that will execute the command
+       "chmod +x" on every file given on its command  line.  What does it do?
+
+
+Script:
+#!/bin/bash
+
+
+if [ "$#" -eq 0 ]; then
+        echo No arguments provided.
+        exit 1
+fi
+
+
+for arg in "$@"
+do
+chmod +x $arg
+done
+
+
+Explanation: This script gives execute permission to user for every file passed in as arguments. It first checks if there are no arguments, then loops through every argument and executes command “chmod +x” on them.
+
+
+(2) 3. Write a short shell script called "nf" to display the number of
+       files in the current directory.
+
+
+Script:
+#!/bin/bash
+
+
+ls -1 | wc -l
+
+
+Explanation: This script executes ls -1, which executes ls but prints one file per line, and it pipes it to wc -l, which counts the number of lines.
+
+
+(4) 4. Write a shell script called "lss" that will list all the files in
+       the current directory in decreasing order of the number of bytes in
+       the file.  It does not need to take any arguments.  Eg.,
+
+
+         $ lss
+         -rwxrwxr--    1 wayne   faculty      385 Nov 29  1996 lss
+         -rwxrwxr--    1 wayne   faculty       42 Mar  9  1990 nf
+
+
+Script:
+#!/bin/bash
+
+
+ls -lS
+
+
+Explanation: This script executes ls with option “-l” and “-S”. “-l” gives more detailed information about the files and -S lists the files sorted by file size in decreasing order.
+ 
+(4) 5. Write a shell script called "whoson" to display a sorted list of
+       undergrad students logged in on the current machine.  You should
+       take a look at the command called "groups" to acquire some of
+       the requisite information. Test it on odin.ics.uci.edu. eg.,
+         $ whoson
+         frank jane jim john laura
+
+
+Script:
+#!/bin/bash
+
+
+exec 2> /dev/null
+
+
+USERS=$(who | cut -d' ' -f1 | sort | uniq)
+
+
+#echo "$USERS"
+
+
+for usr in $USERS
+do
+
+
+if id -nG "$usr" | grep -qw "ugrad" then
+         echo $usr
+fi
+
+
+done
+
+
+Explanation: This script first gets the current distinct users sorted by names (cmd: who | cut -d ‘ ‘ -f1 | sort | uniq does this; who gives a giant table of information about current users, and its first column is the usernames, which we get by cut -d‘ ’ -f1, then we sort it and make it distinct with uniq). Then, we loop through each of the users, and checks if the user belongs to the group “ugrad” and if yes, echo the user out to stdout. Some of the users, however, give an error (such as wayne, which gives error “cannot find name for group ID 750”), so to ignore that error, the script does exec 2> /dev/null, which redirects stderr to null.
+
+
+(2) 6. Write a shell script called "howmany" to display the number of undergrad
+       students logged in on the current machine.  Use whoson if you can.  eg.,
+         $ howmany
+         5
+
+
+Script:
+#!/bin/bash
+
+
+whoson | wc -l
+
+
+Explanation: This script uses whoson and pipes it to wc -l to print the number of lines (which represent the number of online ugrad students logged on).
+
+
+(4) 7. Write a shell script called "valid" that determines if it's
+       argument is a valid shell variable name, eg
+         $ valid foobar
+         yes
+         $ valid 12foobar
+         no
+
+
+        (HINT: define a regular expression, and enlist the aid of "grep".)
+
+
+Script:
+#!/bin/bash
+
+
+VALID='^([a-zA-Z_])([0-9a-zA-Z_])*$'
+
+
+if [ "$#" -eq 0 ]; then
+        echo No arguments provided.
+        exit 1
+fi
+
+
+for arg in "$@"
+do
+
+
+if [[ "$arg" =~ $VALID ]]; then 
+        echo yes
+else
+        echo no
+fi
+done
+
+
+Explanation: This script first assigns the regex to represent a valid shell variable name and assigns it to variable VALID. Then, it loops through the arguments and prints yes if the argument matches to regex expression or no if it does not.
+
+
+(4) 8. Write a shell script called "prargs" that prints out a numbered
+       list of its arguments in the following format:
+         $ prargs a 'b c'
+         0: "prargs"
+         1: "a"
+         2: "b c"
+
+
+Script:
+#!/bin/bash
+
+
+echo 0: prargs
+
+
+INDEX=1
+
+
+for arg in "$@"
+do
+
+
+echo $INDEX: $arg
+INDEX=$((INDEX+1))
+
+
+done
+
+
+Explanation: This script first echo “0: prargs,” because that’s the first thing no matter what. 
+Then, it defines a variable INDEX as 1 and loops through the arguments, echoing INDEX: arg in this format, and then it increments INDEX.
+
+
+(4) marks for overall presentation, ie neatness counts!
+
+
+Make the shell scripts as "bulletproof" as possible; they should never blow
+up, and if used incorrectly should print an error or usage message.  Submit
+each electronically on odin, as well external documentation on how they work.
+ASCII is acceptable, or any other form of word processor.
