@@ -6,6 +6,31 @@ if [ "$#" -eq 0 ]; then
 	exit 0
 fi
 
+for arg in "$@";
+do
+	if [[ $arg == -* ]]; then
+		if [[ $arg == *g* ]]; then
+			echo "Option -g makes it so that owner is not listed, which is an unnecessary feature for lss."
+			exit 0
+		fi
+
+		if [[ $arg == *G* ]]; then
+			echo "Option -G makes it so that group is not listed, which is an unnecessary feature for lss."
+			exit 0
+		fi
+
+		if [[ $arg == *i* ]]; then
+			echo "Option -i (prints out the inode number for each file) messes up the sorting by Size in descending order."
+			exit 0
+		fi
+
+		if [[ $arg == *s* ]]; then
+			echo "Option -s (prints out the size allocated for each file) messes up the sorting by size in descending order."
+			exit 0
+		fi
+	fi
+done
+
 # -s (--size) - print allocated size of each file in blocks
 # -i (--inode) - print index num of each file
 # -g - like -l but do not list owner
