@@ -1,0 +1,44 @@
+#!/bin/bash 
+
+# Checks if trashbin exists
+if [[ -d "~/trashbin" ]]; then
+	echo "Error: Trashbin does not exist. Please call 'srm' first before calling any other 'rm' functions."
+	exit 1
+fi
+
+# Checks if trashbin is empty
+if [[ -z "~/trashbin/trash_content" ]]; then
+	echo "Error: Trashbin is empty."
+	exit 1
+fi
+
+# Checks if there is no argument
+if [[ "$#" -eq 0 ]]; then
+	echo "Error: No arguments given."
+	exit 1 
+fi
+
+for arg in "$@";
+do
+	BASENAME=$(basename $arg)
+	echo $arg
+	# Checks if the $BASENAME is in the trashlog	
+	if [[ $(cut -f1 -d' ' ~/trashbin/trashlog | grep -wc $BASENAME) -eq 0 ]]; then
+		echo "Error: File not found."
+		exit 1
+	fi
+
+	# Finds the FIRST occurence of the $BASENAME in trashlog
+	LOG=$(grep -m 1 "$BASENAME -" ~/trashbin/trashlog)
+#	echo $LOG
+
+	RECOVERPATH=~/trashbin/trash_content/"$BASENAME"
+
+	# Gets the Path that the file was originally in and then moves the file to that path.
+	FILEPATH=$(echo $LOG | cut -f3 -d' ')
+	mv -f "$RECOVERPATH" "$FILEPATH$BASENAME"
+
+
+	# Finds and removes the FIRST occurence of the $BASENAME in trashlog
+	sed -i "$((grep -nm1 "$BASENAME -" ~/trashbin/trashlog) | cut -f 1 -d:) d" ~/trashbin/trashlog
+done

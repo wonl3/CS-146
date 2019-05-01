@@ -1,10 +1,49 @@
-#!/bin/bash -x
+#!/bin/bash
+
+# Check if no arg
+if [[ "$#" -eq 0 ]]; then
+	echo "Error: No arguments."
+	exit 1
+fi
+
+# Create the trashbin directory if it does not exist
+mkdir -p ~/trashbin
+mkdir -p ~/trashbin/trash_content
+touch ~/trashbin/trashlog
 
 for arg in "$@"
 do
+	FILEPATH=""
 
-#remember the log the original directory
+	# Checks if the argument is . or .. (obviously don't want that happening)
+	if [[ $arg == "." ]] || [[ $arg == ".." ]]; then
+		echo "Error: Attempted to srm current/parent directory."
+		exit 1
+	fi
 
-mv -f $arg ./trashcan/
+	# Checking if the argument is an absolute filepath or a relative filepath
+	if [[ $arg == ~* ]] || [[ $arg == /* ]]; then
+		echo "Note: You entered the absolute filepath."
+	else
+		echo "Note: You entered the relative filepath."
+		FILEPATH=$(pwd)
+		FILEPATH+="/"
+	fi 
 
+	# Getting the Absolute Path to the argument
+	DIRNAME="$(dirname $arg)/"
+	FILENAME=$(basename $arg)
+	FILEPATH+=$DIRNAME
+	DEST=~/trashbin/trash_content/"$FILENAME"
+	echo "Moving $FILEPATH$FILENAME to the trashbin."
+
+	# If the file to be srm'd is a file put -f as the second column of the log
+	# If it is a directory put -d
+	if [[ -d $arg ]]; then
+		echo "$FILENAME -d $FILEPATH" >> ~/trashbin/trashlog
+#		mv -f $arg $DEST
+	else
+		echo "$FILENAME -f $FILEPATH" >> ~/trashbin/trashlog
+	fi
+	mv -f "$arg" "$DEST"
 done

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# This bash script is used to quickly access ~/trashbin/trashlog
+
+vim ~/trashbin/trashlog

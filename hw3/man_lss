@@ -1,0 +1,30 @@
+LSS(1)									USER COMMANDS									LSS(1)
+
+NAME
+
+	lss - list directory contents in long listing format, sorted by size in descending order
+
+
+SYNOPSIS
+
+	lss [OPTIONS]... [FILE]...
+
+
+DESCRIPTION
+
+	List information about the FILEs (the current directory by default).
+	Allows most of ls(1)'s options except for:
+		-g, -G, -i, -s.
+
+	-g - makes it so that owner is not listed, which is an unnecessary feature for lss.
+	-G (or --no-group) - makes it so that group is not listed, which is an unncessary
+						feature for lss.
+	-i (or --inode) - prints out the inode numebr for each file, messing up the sorting
+						in lss, so it was ommited.
+	-s (or --size) - prints out the allocated size of each file, messing up the sorting
+						in lss, so it was ommited.
+
+	Exit Status:
+		0	if OK,
+		1	if minor problems (e.g., used an invalid option or ls(1) returned exit status of 1),
+		2	if ls(1) returned exit status of 2. 

@@ -1,0 +1,124 @@
+SRM(1)									USER COMMANDS									SRM(1)
+
+NAME
+
+	srm - 'safe remove' files or directories
+
+
+SYNOPSIS
+
+	srm [FILE]...
+
+
+DESCRIPTION
+
+	srm 'safe removes' files or directories. Unlike rm(1), it does 'safe remove'
+	directories; it returns an exit status of 1 if given no arguments.
+
+	srm moves the specified files and directories to a global trashbin directory
+	in the user's home directory, created upon command call if it does not
+	exist; it also creates a trashlog file inside the trashbin directory to
+	keep track of the PATH of the removed files and directories as well as a
+	subdirectory trash_content that stores the actual files and directories.
+
+	The format of trashlog is as follows:
+		filename (basename) -d/-f (directory/file) Absolute Filepath (of directory/file)
+	
+	srm does not allow the user to remove the current/parent directory; it also
+	notes whether you entered a relative or absolute filepath (for convenience).
+
+
+----------------------------------------------------------------------------------------------
+
+
+UNRM(1)									USER COMMANDS									UNRM(1)
+
+NAME
+
+	unrm - 'un-remove' files or directories from trashbin
+
+
+SYNOPSIS
+
+	unrm [FILE]...
+
+
+DESCRIPTION
+
+	unrm 'un-removes' files or directories that were 'safe removed' by srm; it
+	returns an exit status of 1 if trashbin does not exist, trash_content is
+	empty, it is given no arguments, or if the given file is not found in trashlog.
+
+	unrm recovers the Absolute Filepath of the file or directory to be
+	'un-removed.' It then calls mv(1) on the file or directory; it also
+	calls grep(1) and sed(1) in order to remove the file information in
+	trashlog. If there are multiple files or directories with the same name,
+	then it 'un-removes' the first one ONLY.
+
+
+----------------------------------------------------------------------------------------------
+
+
+DURM(1)									USER COMMANDS									DURM(1)
+
+NAME
+
+	durm - returns the disk usage of trashbin.
+
+
+SYNOPSIS
+
+	durm
+
+
+DESCRIPTION
+
+	durm checks the disk usage of each file or directory, sums it up, and prints
+	it out to the terminal. It returns an exit status of 1 if trashbin does not
+	exist or if trash_content is empty.
+
+
+----------------------------------------------------------------------------------------------
+
+
+LSRM(1)									USER COMMANDS									LSRM(1)
+
+NAME
+
+	lsrm - lists the files and directories in trashbin
+
+
+SYNOPSIS
+
+	lsrm
+
+
+DESCRIPTION
+
+	lsrm lists in long listing format the files and directories in trashbin;
+	it calls ls(1) -lRA, so it lists subdirectories recursively (but does not
+	list implied . or .. because of option -A). It returns an exit status of
+	1 if trashbin does not exist or if trash_content is empty.
+
+
+----------------------------------------------------------------------------------------------
+
+
+TRASH(1)									USER COMMANDS									TRASH(1)
+
+NAME
+
+	trash - empties the trashlog and trash_content
+
+
+SYNOPSIS
+
+	trash
+
+
+DESCRIPTION
+
+	trash clears the trashbin and the trashlog. Nothing much to say here.
+	It returns an exit status of 1 if trashbin does not exist or if
+	trash_content is empty.
+

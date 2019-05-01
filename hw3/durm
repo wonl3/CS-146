@@ -1,5 +1,17 @@
-#!/bin/bash -x
+#!/bin/bash 
 
-du -a trashcan/ | awk -F ' ' ' {sum += $1;} END {print sum;} '
+# Checks if trashbin exists
+if [[ -d "~/trashbin" ]]; then
+	echo "Error: Trashbin does not exist. Please call 'srm' first before calling any other 'rm' functions."
+	exit 1
+fi
+
+# Checks if trashbin is empty
+if [[ -z "~/trashbin/trash_content" ]]; then
+	echo "Error: Trashbin is empty."
+	exit 1
+fi
+
+du -a ~/trashbin/trash_content | awk -F ' ' ' {sum += $1;} END {print sum;} '
 
 

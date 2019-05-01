@@ -1,32 +1,36 @@
-#!/bin/bash -x
+#!/bin/bash 
 
 # If no arguments, print hw2-lss and exit
 if [ "$#" -eq 0 ]; then
 	ls -lS
-	exit 0
+	exit 1
 fi
 
 for arg in "$@";
 do
 	if [[ $arg == -* ]]; then
 		if [[ $arg == *g* ]]; then
+			echo "Error: Option -g not allowed."
 			echo "Option -g makes it so that owner is not listed, which is an unnecessary feature for lss."
-			exit 0
+			exit 1
 		fi
 
-		if [[ $arg == *G* ]]; then
+		if [[ $arg == *G* || $arg == *no-group* ]]; then
+			echo "Error: Option -G not allowed."
 			echo "Option -G makes it so that group is not listed, which is an unnecessary feature for lss."
-			exit 0
+			exit 1
 		fi
 
-		if [[ $arg == *i* ]]; then
+		if [[ $arg == *i* || $arg == *inode* ]]; then
+			echo "Error: Option -i not allowed."
 			echo "Option -i (prints out the inode number for each file) messes up the sorting by Size in descending order."
-			exit 0
+			exit 1
 		fi
 
-		if [[ $arg == *s* ]]; then
+		if [[ $arg == *s* || $arg == *size* ]]; then
+			echo "Error: Option -s not allowed."
 			echo "Option -s (prints out the size allocated for each file) messes up the sorting by size in descending order."
-			exit 0
+			exit 1
 		fi
 	fi
 done
@@ -35,4 +39,4 @@ done
 # -i (--inode) - print index num of each file
 # -g - like -l but do not list owner
 
-exec ls -lS "$@"
+exec ls -lSd "$@"
