@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 			while (getline(&line, &len, file) != -1)
 			{
 				if (line_num % n < m)
-					printf("%s\n", line);
+					printf("%s", line);
 				++line_num;
 			}
 			fclose(file);
