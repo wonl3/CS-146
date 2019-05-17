@@ -132,6 +132,7 @@ int main(int argc, char *argv[])
 //		printf("filepath %s\n", file_path);
 
 		// Check if the path is valid (a directory)
+/*
 		DIR * dir = opendir(file_path);
 		if (dir) closedir(dir);
 		else if (ENOENT == errno)
@@ -144,7 +145,7 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "%s\n", ERR_MSG);
 			exit(1);
 		}
-
+*/
 		char hidden_name[4096] = {'\0'};
 		strcat(hidden_name, ".");
 		strcat(hidden_name, base_name);
