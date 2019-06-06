@@ -1,0 +1,70 @@
+#!/bin/bash 
+
+# rename [-f] sed-command file1 file2 ...
+# Need at least 2
+
+usage() {
+	echo "Usage: rename [-f] sed-substitution-sommand file1 file2 ..."
+	exit 1
+}
+
+# Check if enough arguments
+if [[ "$#" -lt 2 ]]; then
+	echo "Given $# arguments. Need at least 2."
+	usage
+fi
+
+flag=false
+start=1
+
+# Check for option
+if [[ $1 == -* ]]; then
+	if [[ $1 == -f ]]; then
+		# Set flag to true and update start
+		flag=true
+		start=2
+	else
+		echo "Invalid option given: $1"
+		usage
+	fi
+fi
+
+args=("$@")
+
+n=$(expr $start - 1)
+SED=${args[$n]}
+
+while [ $start -lt "$#" ];
+do
+	arg=${args[$start]}
+	
+	# If arg is not found
+	if [ ! -f $arg ]; then
+		echo File \( $arg \) Not found.
+		start=$(expr $start + 1)
+		continue
+	fi
+	
+	# Actual Renaming Segment
+	dir=$(dirname $arg)	
+	base=$(basename $arg)
+	new=$(echo $base | sed "s$SED")
+
+	newpath=$(echo $(awk -v d=$dir -v newname=$new 'BEGIN {printf "%s/%s", d, newname}'))
+	echo $newpath
+	
+	# Check if flag is on
+	if $flag; then
+		mv -f $arg $newpath
+	else
+		# Check if the newpath is already an existing file
+		if [ -f $newpath ]; then
+			echo File \( $newpath \) already exists. Please use the \'-f\' option to overwrite.
+		else
+			mv -f $arg $newpath
+		fi 
+	fi
+
+	# Increment the index
+	start=$(expr $start + 1)
+done
