@@ -1,0 +1,42 @@
+#!/bin/bash
+# This is a front-end to awk(1), which allows NAMED COLUMNS to be accessed as variables.
+# USAGE: awkcel {any standard awk program} FILENAME
+# This script expects exactly two arguments.
+# The first argument is an awk program that allows use of variables as described below.
+# The second argument is an input file with a constant number of tab-separated columns.
+# Any line that starts with a hash ("#") is assumed a comment, and discarded.
+# The first (non-comment) line is the HEADER.
+# The HEADER line contains tab-separated names of the columns.
+# These column names must be valid awk(1) variable names.
+# Each subsequent line must have the same number of tab-separated columns as the HEADER.
+# COLUMNS SHOULD NOT BE EMPTY: behavior is undefined if any line has two adjacent tabs.
+# Upon each line of input, values can be accessed using the name defined in the HEADER.
+
+awk_cmd=$1
+FILENAME=$2
+names=""
+cnt=1
+
+if ! [ -f $FILENAME ]
+then
+    echo "Invalid File. Cannot parse columns names." >&2
+    exit 1
+fi
+
+
+# keeping all the white spaces
+while read -r line;
+    do
+    ([[ $line == "#"* ]] || [[ $line == "" ]]) && continue
+    for name in `echo $line | awk -F '\t' '{for(i=1; i<=NF; i++) print $i}'`
+        do 
+#			echo $name
+            names+="$name=\$$cnt;"
+            cnt=$(($cnt + 1))
+        done
+	break
+done < "$FILENAME"
+
+#echo $names
+
+awk -F'\t' "{$names} $awk_cmd" $FILENAME 

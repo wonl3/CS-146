@@ -1,0 +1,49 @@
+#!/bin/bash
+
+usage() {
+	echo "Usage: awkcel awk-cmd file (tab-separated file)"
+	exit 1
+}
+
+# Check if correct num of arguments
+if [[ "$#" -ne 2 ]]; then
+	echo "Given $# arguments. Need exactly 2."
+	usage
+fi
+
+AWK=$1
+file=$2
+
+# Check if file exists
+if [ ! -f $file ]; then
+	echo File \( $file \) does not exist.
+	usage
+fi
+
+vars=""
+index=1
+header=true
+
+while read -r line;
+do
+#	echo $line
+	# Check if line is a comment line or an empty line
+	if [[ $line == \#* ]]; then
+		continue
+	fi
+
+	if $header; then
+		for column in $(echo $line | awk -F '\t' '{for(i=1;i<=NF;i++) print $i}')
+		do
+			vars+="$column=\$$index;"
+			index=$(expr $index + 1)
+		done
+
+		header=false
+		continue
+	fi
+
+	echo $vars
+	awk -F'\t' "{$vars} $AWK" $file
+
+done < "$file"
